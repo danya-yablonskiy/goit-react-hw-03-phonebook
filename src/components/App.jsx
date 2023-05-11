@@ -15,18 +15,20 @@ export class App extends Component {
     filter: '',
   };
 
-  // Чому це не працює? Тут альорт спрацьовує, але після нього ім'я всеодно додається
-  // addContact = (name, number) => {
-  //   this.state.contacts.map(contact => {
-  //     if (contact.name.includes(name)) {
-  //       alert('Error!');
-  //       return;
-  //     }
-  //     this.setState({
-  //       contacts: [...this.state.contacts, { id: nanoid(), name, number }],
-  //     });
-  //   });
-  // };
+  componentDidMount() { 
+    const localData = localStorage.getItem('contacts')
+    if (localData) {
+      this.setState({
+        contacts: JSON.parse(localData)
+      })
+    }
+  }
+
+  componentDidUpdate(_, prevState) {
+    if (prevState !== this.state.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
 
   addContact = (name, number) => {
     const duplicate = this.state.contacts.find(
@@ -47,12 +49,12 @@ export class App extends Component {
     });
   };
 
-  deleteContact = (id) => {
+  deleteContact = id => {
     const filterId = this.state.contacts.filter(contact => contact.id !== id);
     this.setState({
-      contacts: [...filterId]
-    })
-  }
+      contacts: [...filterId],
+    });
+  };
 
   render() {
     return (
